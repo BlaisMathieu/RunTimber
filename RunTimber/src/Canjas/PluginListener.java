@@ -25,12 +25,12 @@ public class PluginListener implements Listener {
             BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST,
             BlockFace.DOWN);
 
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
+    @EventHandler()
     public void onBlockBreak(BlockBreakEvent event) {
         onBlockRemove(event.getBlock(), breakDelay);
     }
 
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
+    @EventHandler()
     public void onLeavesDecay(LeavesDecayEvent event) {
         long decayDelay = 2;
         onBlockRemove(event.getBlock(), decayDelay);
@@ -39,10 +39,9 @@ public class PluginListener implements Listener {
     private void onBlockRemove(final Block oldBlock, long delay) {
         for (BlockFace neighborFace: NEIGHBORS) {
             final Block block = oldBlock.getRelative(neighborFace);
-            if (Tag.LEAVES.isTagged(block.getType())) {
+            if (Tag.LEAVES.isTagged(block.getType()))
                 plugin.getServer().getScheduler().runTaskLater(plugin, () -> BreakBlock(block), delay);
-            }
-            if (Tag.LOGS.isTagged(block.getType())) {
+            if (Tag.LOGS.isTagged(block.getType()) && && !Tag.LEAVES.isTagged(oldBlock.getType())) {
                 plugin.getServer().getScheduler().runTaskLater(plugin, () -> BreakBlock(block), delay - 5);
                 breakLogs(block);
             }
@@ -56,9 +55,8 @@ public class PluginListener implements Listener {
                 plugin.getServer().getScheduler().runTaskLater(plugin, () -> BreakBlock(block),breakDelay - 5);
                 plugin.getServer().getScheduler().runTaskLater(plugin, () -> breakLogs(block), breakDelay - 5);
             }
-            if (Tag.LEAVES.isTagged(block.getType())) {
+            if (Tag.LEAVES.isTagged(block.getType()))
                 plugin.getServer().getScheduler().runTaskLater(plugin, () -> BreakBlock(block), breakDelay);
-            }
         }
     }
 
